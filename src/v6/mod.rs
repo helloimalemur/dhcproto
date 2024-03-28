@@ -57,6 +57,9 @@ mod htype;
 mod option_codes;
 mod options;
 mod oro_codes;
+pub mod fqdn;
+pub mod flags;
+
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -74,6 +77,7 @@ pub use crate::{
     encoder::{Encodable, Encoder},
     error::*,
 };
+use crate::v4::Flags;
 
 /// default dhcpv6 server port
 pub const SERVER_PORT: u16 = 547;
@@ -120,6 +124,7 @@ pub const CLIENT_PORT: u16 = 546;
 ///                           field (4 octets less than the size of the
 ///                           message).
 /// ```
+
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Message {
@@ -130,6 +135,10 @@ pub struct Message {
     /// trns id must be the same for all messages in a DHCP transaction
     /// <https://datatracker.ietf.org/doc/html/rfc8415#section-16.1>
     xid: [u8; 3],
+    /// seconds elapsed since client began address acquisition or renewal process
+    secs: u16,
+    /// Flags
+    flags: Flags,
     /// Options
     /// <https://datatracker.ietf.org/doc/html/rfc8415#section-21>
     opts: DhcpOptions,
@@ -140,6 +149,8 @@ impl Default for Message {
         Self {
             msg_type: MessageType::Solicit,
             xid: rand::random(),
+            secs: 0,
+            flags: Default::default(),
             opts: DhcpOptions::new(),
         }
     }
@@ -171,6 +182,28 @@ impl Message {
     /// Set message type
     pub fn set_msg_type(&mut self, msg_type: MessageType) -> &mut Self {
         self.msg_type = msg_type;
+        self
+    }
+
+
+    /// Get the message's flags.
+    pub fn flags(&self) -> Flags {
+        self.flags
+    }
+
+    /// Set the message's flags.
+    pub fn set_flags(&mut self, flags: Flags) -> &mut Self {
+        self.flags = flags;
+        self
+    }
+
+    /// Get the message's secs.
+    pub fn secs(&self) -> u16 {
+        self.secs
+    }
+    /// Set the message's secs.
+    pub fn set_secs(&mut self, secs: u16) -> &mut Self {
+        self.secs = secs;
         self
     }
 
