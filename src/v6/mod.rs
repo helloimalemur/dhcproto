@@ -380,6 +380,8 @@ impl Decodable for Message {
         Ok(Message {
             msg_type: decoder.read_u8()?.into(),
             xid: decoder.read::<3>()?,
+            secs: decoder.read_u16()?,
+            flags: decoder.read_u16()?.into(),
             opts: DhcpOptions::decode(decoder)?,
         })
     }
