@@ -391,6 +391,8 @@ impl Encodable for Message {
     fn encode(&self, e: &mut Encoder<'_>) -> EncodeResult<()> {
         e.write_u8(self.msg_type.into())?;
         e.write(self.xid)?;
+        e.write_u16(self.secs)?;
+        e.write_u16(self.flags.into())?;
         self.opts.encode(e)?;
         Ok(())
     }
