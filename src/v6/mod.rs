@@ -403,6 +403,8 @@ impl fmt::Display for Message {
         f.debug_struct("Message")
             .field("xid", &self.xid_num())
             .field("msg_type", &self.msg_type())
+            .field("secs", &self.secs())
+            .field("flags", &self.flags())
             .field("opts", &self.opts())
             .finish()
     }
